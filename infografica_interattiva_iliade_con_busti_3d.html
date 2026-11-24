@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iliade di Omero - Infografica Interattiva 3D</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js per i busti 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Google Fonts: Cinzel (classico/epico) e Inter (leggibilità) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0c0a09; /* Stone 950 */
+      color: #f5f5f4; /* Stone 100 */
+      overflow-x: hidden;
+    }
+    .font-epic {
+      font-family: 'Cinzel', serif;
+    }
+    /* Pattern greco decorativo sottile */
+    .greek-border {
+      background-image: repeating-linear-gradient(
+        90deg,
+        rgba(217, 119, 6, 0.3) 0px,
+        rgba(217, 119, 6, 0.3) 12px,
+        transparent 12px,
+        transparent 24px
+      );
+      height: 4px;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1c1917;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #78350f;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b45309;
+    }
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      cursor: grab;
+    }
+    canvas:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-600 selection:text-white">
+
+  <!-- HEADER HERO -->
+  <header class="relative overflow-hidden bg-gradient-to-b from-stone-900 via-stone-950 to-stone-950 border-b border-amber-900/40 pt-10 pb-12 px-4 sm:px-8">
+    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 50% 0%, #f59e0b 0%, transparent 70%);"></div>
+    
+    <div class="max-w-7xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/60 border border-amber-700/50 text-amber-400 text-xs font-semibold tracking-widest uppercase mb-4">
+        <span>Poema Epico Classico</span>
+        <span>•</span>
+        <span>VIII - VII Sec. a.C.</span>
+      </div>
+      
+      <h1 class="font-epic text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 mb-4 drop-shadow-sm">
+        L'ILIADE DI OMERO
+      </h1>
+      
+      <p class="max-w-2xl mx-auto text-stone-300 text-base sm:text-lg leading-relaxed italic">
+        «Cantami, o Diva, del Pelìde Achille l'ira funesta che infiniti addusse lutti agli Achei...»
+      </p>
+
+      <!-- Barra di navigazione rapida -->
+      <nav class="mt-8 flex flex-wrap justify-center gap-2 sm:gap-4">
+        <a href="#dati-generali" class="px-4 py-2 rounded-xl bg-stone-900 hover:bg-amber-950/60 border border-stone-800 hover:border-amber-600/60 text-sm font-medium text-stone-200 transition">
+          📜 Dati dell'Opera
+        </a>
+        <a href="#personaggi-3d" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-sm shadow-lg shadow-amber-900/30 transition">
+          🗿 Galleria Busti 3D (12)
+        </a>
+        <a href="#sequenze-trama" class="px-4 py-2 rounded-xl bg-stone-900 hover:bg-amber-950/60 border border-stone-800 hover:border-amber-600/60 text-sm font-medium text-stone-200 transition">
+          ⚔️ Sequenze Narrative
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="greek-border w-full"></div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+    <!-- SEZIONE 1: DATI GENERALI DELL'OPERA -->
+    <section id="dati-generali" class="scroll-mt-8">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-epic font-bold">I</span>
+        <h2 class="font-epic text-2xl sm:text-3xl font-bold text-amber-100">Dati Generali dell'Opera</h2>
+      </div>
+
+      <!-- Griglia KPI principali -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-stone-900/90 border border-stone-800 rounded-2xl p-5 hover:border-amber-700/50 transition">
+          <div class="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">Struttura & Metrica</div>
+          <div class="font-epic text-2xl sm:text-3xl font-bold text-white">24 Libri</div>
+          <div class="text-stone-400 text-xs sm:text-sm mt-1">~15.693 versi in esametri dattilici</div>
+        </div>
+        
+        <div class="bg-stone-900/90 border border-stone-800 rounded-2xl p-5 hover:border-amber-700/50 transition">
+          <div class="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">Arco Temporale</div>
+          <div class="font-epic text-2xl sm:text-3xl font-bold text-white">51 Giorni</div>
+          <div class="text-stone-400 text-xs sm:text-sm mt-1">Nel 10° e ultimo anno di guerra</div>
+        </div>
+
+        <div class="bg-stone-900/90 border border-stone-800 rounded-2xl p-5 hover:border-amber-700/50 transition">
+          <div class="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">Ambientazione</div>
+          <div class="font-epic text-2xl sm:text-3xl font-bold text-white">Troia (Ilio)</div>
+          <div class="text-stone-400 text-xs sm:text-sm mt-1">Piana troiana e campo acheo (XII sec. a.C.)</div>
+        </div>
+
+        <div class="bg-stone-900/90 border border-stone-800 rounded-2xl p-5 hover:border-amber-700/50 transition">
+          <div class="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">Autore & Genere</div>
+          <div class="font-epic text-2xl sm:text-3xl font-bold text-white">Omero</div>
+          <div class="text-stone-400 text-xs sm:text-sm mt-1">Poema epico eroico (tradizione orale)</div>
+        </div>
+      </div>
+
+      <!-- Tema Centrale Card -->
+      <div class="bg-gradient-to-r from-stone-900 via-amber-950/20 to-stone-900 border border-amber-800/40 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl shrink-0">
+          🔥
+        </div>
+        <div>
+          <h3 class="font-epic text-lg sm:text-xl font-bold text-amber-300 mb-2">Il Tema Centrale: L'Ira (Mênis) e la Pietà</h3>
+          <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+            L'opera non narra l'intera guerra di Troia (né l'inganno del cavallo), ma si concentra sull'<strong class="text-amber-200">ira di Achille</strong>: prima scatenata dall'offesa all'onore subita da Agamennone (con conseguenze disastrose per i Greci), poi trasformata in furia vendicatrice dopo la morte dell'amico Patroclo, fino al superamento dell'odio nella <strong class="text-amber-200">commovente pietà umana</strong> davanti al dolore di re Priamo.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEZIONE 2: GALLERIA PERSONAGGI CON BUSTI 3D -->
+    <section id="personaggi-3d" class="scroll-mt-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-epic font-bold">II</span>
+            <h2 class="font-epic text-2xl sm:text-3xl font-bold text-amber-100">I Protagonisti in 3D</h2>
+          </div>
+          <p class="text-stone-400 text-sm">
+            Trascina con il mouse o il dito sui busti scolpiti per ruotarli a 360°. Filtra per fazione o clicca per ispezionare.
+          </p>
+        </div>
+
+        <!-- Filtri Fazione -->
+        <div class="flex flex-wrap gap-2" id="faction-filters">
+          <button data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-amber-600 text-stone-950 transition">
+            Tutti (12)
+          </button>
+          <button data-filter="achei" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 text-sky-400 border border-sky-900/60 hover:bg-sky-950/40 transition">
+            🛡️ Achei / Greci (6)
+          </button>
+          <button data-filter="troiani" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 text-rose-400 border border-rose-900/60 hover:bg-rose-950/40 transition">
+            🔥 Troiani (5)
+          </button>
+          <button data-filter="dei" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 text-purple-400 border border-purple-900/60 hover:bg-purple-950/40 transition">
+            ⚡ Gli Dei (1)
+          </button>
+        </div>
+      </div>
+
+      <!-- Griglia dei Busti 3D -->
+      <div id="characters-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Le card verranno generate dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- SEZIONE 3: STORIA GENERALE DIVISA IN SEQUENZE -->
+    <section id="sequenze-trama" class="scroll-mt-8">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-epic font-bold">III</span>
+        <h2 class="font-epic text-2xl sm:text-3xl font-bold text-amber-100">La Trama Divisa in 6 Sequenze</h2>
+      </div>
+
+      <div class="relative border-l-2 border-amber-800/60 ml-4 sm:ml-6 space-y-8 pb-4">
+        
+        <!-- Sequenza 1 -->
+        <div class="relative pl-8 sm:pl-10 group">
+          <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-stone-950 border-2 border-amber-500 flex items-center justify-center font-epic font-bold text-amber-400 text-sm group-hover:bg-amber-500 group-hover:text-stone-950 transition">
+            1
+          </div>
+          <div class="bg-stone-900/90 border border-stone-800 group-hover:border-amber-700/60 rounded-2xl p-5 sm:p-6 transition shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-epic text-lg sm:text-xl font-bold text-amber-200">Il Proemio e l'Ira di Achille</h3>
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800/60 text-amber-400 text-xs font-semibold">Libro I</span>
+            </div>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+              Nel decimo anno di guerra, una pestilenza colpisce il campo acheo perché Agamennone rifiuta di restituire Criseide al padre, sacerdote di Apollo. Costretto a cederla, Agamennone pretende in cambio <strong class="text-white">Briseide</strong>, schiava favorita di Achille. Offeso nell'onore, Achille si ritira dal combattimento e chiede alla madre Teti di convincere Zeus a far vincere i Troiani finché i Greci non lo supplicheranno.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sequenza 2 -->
+        <div class="relative pl-8 sm:pl-10 group">
+          <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-stone-950 border-2 border-amber-500 flex items-center justify-center font-epic font-bold text-amber-400 text-sm group-hover:bg-amber-500 group-hover:text-stone-950 transition">
+            2
+          </div>
+          <div class="bg-stone-900/90 border border-stone-800 group-hover:border-amber-700/60 rounded-2xl p-5 sm:p-6 transition shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-epic text-lg sm:text-xl font-bold text-amber-200">La Ripresa delle Ostilità e l'Avanzata Troiana</h3>
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800/60 text-amber-400 text-xs font-semibold">Libri II – VIII</span>
+            </div>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+              Senza Achille, gli eserciti tornano a scontrarsi. Un duello risolutivo tra <strong class="text-white">Menelao e Paride</strong> viene interrotto da Afrodite che salva Paride e dal tradimento dell'arciere troiano Pandaro che rompe la tregua. Guidati dal valoroso <strong class="text-white">Ettore</strong> e sostenuti dal volere di Zeus, i Troiani avanzano travolgendo i Greci e costringendoli a rinchiudersi nel loro campo fortificato sulla spiaggia.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sequenza 3 -->
+        <div class="relative pl-8 sm:pl-10 group">
+          <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-stone-950 border-2 border-amber-500 flex items-center justify-center font-epic font-bold text-amber-400 text-sm group-hover:bg-amber-500 group-hover:text-stone-950 transition">
+            3
+          </div>
+          <div class="bg-stone-900/90 border border-stone-800 group-hover:border-amber-700/60 rounded-2xl p-5 sm:p-6 transition shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-epic text-lg sm:text-xl font-bold text-amber-200">L'Ambasceria ad Achille e l'Assalto alle Navi</h3>
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800/60 text-amber-400 text-xs font-semibold">Libri IX – XV</span>
+            </div>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+              Disperato per le sconfitte, Agamennone invia Odisseo, Aiace e Fenice da Achille offrendo doni immensi e Briseide, ma l'eroe rifiuta sdegnosamente. La battaglia infuria: nonostante le gesta di Diomede e Aiace Telamonio, Ettore sfonda il muro difensivo acheo e arriva a minacciare di <strong class="text-white">incendiare le navi greche</strong>, tagliando loro ogni via di ritorno.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sequenza 4 -->
+        <div class="relative pl-8 sm:pl-10 group">
+          <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-stone-950 border-2 border-rose-500 flex items-center justify-center font-epic font-bold text-rose-400 text-sm group-hover:bg-rose-500 group-hover:text-white transition">
+            4
+          </div>
+          <div class="bg-stone-900/90 border border-rose-900/40 group-hover:border-rose-600/60 rounded-2xl p-5 sm:p-6 transition shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-epic text-lg sm:text-xl font-bold text-rose-300">L'Intervento e la Morte di Patroclo (La Svolta)</h3>
+              <span class="px-3 py-1 rounded-full bg-rose-950/80 border border-rose-800/60 text-rose-300 text-xs font-semibold">Libri XVI – XVII</span>
+            </div>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+              Davanti alle navi in fiamme, <strong class="text-white">Patroclo</strong> implora Achille di poter scendere in battaglia indossando la sua armatura per spaventare i Troiani. Achille accetta, ordinandogli di respingerli senza avvicinarsi alle mura. Patroclo fa strage di nemici ma, accecato dall'euforia, disobbedisce e viene <strong class="text-rose-300">ucciso da Ettore</strong> (con l'aiuto di Apollo), che si impadronisce delle armi di Achille.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sequenza 5 -->
+        <div class="relative pl-8 sm:pl-10 group">
+          <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-stone-950 border-2 border-amber-500 flex items-center justify-center font-epic font-bold text-amber-400 text-sm group-hover:bg-amber-500 group-hover:text-stone-950 transition">
+            5
+          </div>
+          <div class="bg-stone-900/90 border border-stone-800 group-hover:border-amber-700/60 rounded-2xl p-5 sm:p-6 transition shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-epic text-lg sm:text-xl font-bold text-amber-200">Il Ritorno di Achille e la Vendetta su Ettore</h3>
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800/60 text-amber-400 text-xs font-semibold">Libri XVIII – XXII</span>
+            </div>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+              Distrutto dal dolore, Achille si riconcilia con Agamennone e torna in guerra con una nuova armatura forgiata dal dio Efesto. Semina il panico tra i Troiani che fuggono dentro le mura. Solo <strong class="text-white">Ettore</strong> resta fuori ad affrontarlo: dopo un tragico inseguimento intorno a Troia, Achille lo uccide in duello e ne oltraggia il corpo trascinandolo legato al suo carro.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sequenza 6 -->
+        <div class="relative pl-8 sm:pl-10 group">
+          <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full bg-stone-950 border-2 border-amber-500 flex items-center justify-center font-epic font-bold text-amber-400 text-sm group-hover:bg-amber-500 group-hover:text-stone-950 transition">
+            6
+          </div>
+          <div class="bg-stone-900/90 border border-stone-800 group-hover:border-amber-700/60 rounded-2xl p-5 sm:p-6 transition shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-epic text-lg sm:text-xl font-bold text-amber-200">I Funerali di Patroclo e la Pietà verso Priamo</h3>
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800/60 text-amber-400 text-xs font-semibold">Libri XXIII – XXIV</span>
+            </div>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+              Dopo i solenni giochi funebri per Patroclo, Achille continua a infierire sul cadavere di Ettore. Mosso a pietà, Zeus guida l'anziano re <strong class="text-white">Priamo</strong> di notte nella tenda di Achille. Priamo gli bacia le mani implorando il corpo del figlio: commosso al pensiero del proprio padre Peleo, Achille accetta. Il poema si chiude con una tregua di dodici giorni per i funerali di Ettore.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DI DETTAGLIO BUSTO 3D INGRANDITO -->
+  <div id="character-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-stone-900 border border-amber-700/60 rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col md:flex-row relative animate-fade-in">
+      <button id="close-modal" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-stone-800 hover:bg-amber-600 text-stone-200 hover:text-stone-950 flex items-center justify-center font-bold transition">
+        ✕
+      </button>
+      
+      <!-- Canvas 3D Ingrandito -->
+      <div class="w-full md:w-1/2 h-72 md:h-96 bg-gradient-to-b from-stone-800 to-stone-950 relative">
+        <div id="modal-canvas-container" class="w-full h-full"></div>
+        <div class="absolute bottom-3 left-0 right-0 text-center text-[11px] text-amber-300/70 pointer-events-none">
+          ↻ Trascina per ruotare il busto 3D
+        </div>
+      </div>
+
+      <!-- Dettagli Testuali -->
+      <div class="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-center">
+        <div id="modal-faction-badge" class="inline-block self-start px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3"></div>
+        <h3 id="modal-name" class="font-epic text-2xl sm:text-3xl font-bold text-white mb-1"></h3>
+        <p id="modal-origin" class="text-amber-400 text-sm font-medium mb-4"></p>
+        <div class="h-px bg-stone-800 w-full mb-4"></div>
+        <p id="modal-role" class="text-stone-300 text-sm leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-stone-800 bg-stone-950 py-8 px-4 text-center text-stone-500 text-xs sm:text-sm">
+    <p class="font-epic text-amber-500/80 mb-1">Infografica Interattiva sull'Iliade di Omero</p>
+    <p>Sculture 3D procedurali generate in tempo reale con Three.js</p>
+  </footer>
+
+  <!-- SCRIPT LOGICA DATI E GENERAZIONE BUSTI 3D PROCEDURALI -->
+  <script>
+    // Dati completi dei 12 personaggi
+    const charactersData = [
+      {
+        id: 'achille',
+        name: 'Achille',
+        origin: 'Ftia (Tessaglia)',
+        faction: 'achei',
+        factionLabel: 'Achei (Greci)',
+        bustType: 'achilles',
+        materialType: 'bronze_gold',
+        role: 'Il più forte guerriero greco, semidio (figlio di Peleo e della dea Teti). Si ritira dalla battaglia per un\'offesa subita da Agamennone, causando gravi perdite ai Greci. Torna a combattere solo per vendicare la morte dell\'amico Patroclo, uccidendo Ettore.'
+      },
+      {
+        id: 'agamennone',
+        name: 'Agamennone',
+        origin: 'Micene',
+        faction: 'achei',
+        factionLabel: 'Achei (Greci)',
+        bustType: 'king_crown',
+        materialType: 'gold',
+        role: 'Comandante supremo della spedizione greca. Arrogante e superbo, scatena l\'ira di Achille sottraendogli la schiava Briseide. Guida i Greci nei momenti più difficili fino alla riconciliazione con Achille.'
+      },
+      {
+        id: 'patroclo',
+        name: 'Patroclo',
+        origin: 'Opunte (Locride)',
+        faction: 'achei',
+        factionLabel: 'Achei (Greci)',
+        bustType: 'young_warrior',
+        materialType: 'bronze',
+        role: 'Migliore amico e compagno d\'armi di Achille. Vedendo i Greci in rotta, indossa le armi di Achille per spaventare i Troiani, ma viene ucciso da Ettore. La sua morte è la svolta decisiva del poema.'
+      },
+      {
+        id: 'menelao',
+        name: 'Menelao',
+        origin: 'Sparta',
+        faction: 'achei',
+        factionLabel: 'Achei (Greci)',
+        bustType: 'spartan_king',
+        materialType: 'bronze',
+        role: 'Re di Sparta e fratello di Agamennone. È il marito legittimo di Elena; la guerra scoppia per vendicare il rapimento della moglie da parte di Paride. Sfida Paride a duello, vincendo, ma il troiano viene salvato da Afrodite.'
+      },
+      {
+        id: 'odisseo',
+        name: 'Odisseo (Ulisse)',
+        origin: 'Itaca',
+        faction: 'achei',
+        factionLabel: 'Achei (Greci)',
+        bustType: 'odysseus',
+        materialType: 'marble_bronze',
+        role: 'Re astuto, saggio e grande oratore. Cerca di convincere Achille a tornare in battaglia, compie missioni di spionaggio notturno e mantiene alto il morale dell\'esercito greco.'
+      },
+      {
+        id: 'aiace',
+        name: 'Aiace Telamonio',
+        origin: 'Salamina',
+        faction: 'achei',
+        factionLabel: 'Achei (Greci)',
+        bustType: 'heavy_warrior',
+        materialType: 'dark_bronze',
+        role: 'Secondo guerriero greco per forza dopo Achille. Difende eroicamente le navi greche dall\'assalto troiano e affronta Ettore in un celebre duello finito in parità.'
+      },
+      {
+        id: 'ettore',
+        name: 'Ettore',
+        origin: 'Troia',
+        faction: 'troiani',
+        factionLabel: 'Troiani',
+        bustType: 'hector',
+        materialType: 'crimson_bronze',
+        role: 'Principe ereditario di Troia (figlio di Priamo ed Ecuba) e comandante dell\'esercito troiano. Eroe nobile, combatte per difendere la famiglia e la patria. Uccide Patroclo e viene infine ucciso in duello da Achille.'
+      },
+      {
+        id: 'priamo',
+        name: 'Priamo',
+        origin: 'Troia',
+        faction: 'troiani',
+        factionLabel: 'Troiani',
+        bustType: 'elder_king',
+        materialType: 'marble',
+        role: 'Anziano e saggio re di Troia. Assiste impotente alla rovina della sua città e dei suoi figli. Compie il gesto eroico e commovente di recarsi di notte nella tenda di Achille per supplicare la restituzione del cadavere di Ettore.'
+      },
+      {
+        id: 'paride',
+        name: 'Paride (Alessandro)',
+        origin: 'Troia',
+        faction: 'troiani',
+        factionLabel: 'Troiani',
+        bustType: 'phrygian_prince',
+        materialType: 'marble_gold',
+        role: 'Principe troiano, fratello di Ettore. Rapendo Elena a Menelao ha causato la guerra. Meno valoroso del fratello nel corpo a corpo, è un abile arciere.'
+      },
+      {
+        id: 'andromaca',
+        name: 'Andromaca',
+        origin: 'Tebe Ipoplacia',
+        faction: 'troiani',
+        factionLabel: 'Troiani',
+        bustType: 'veiled_woman',
+        materialType: 'marble',
+        role: 'Moglie devota di Ettore e madre del piccolo Astianatte. Protagonista di uno dei passi più celebri del poema (il commiato alle porte Scee), incarna il dolore delle donne colpite dalla guerra.'
+      },
+      {
+        id: 'elena',
+        name: 'Elena',
+        origin: 'Sparta (poi Troia)',
+        faction: 'troiani',
+        factionLabel: 'Troiani',
+        bustType: 'queen_diadem',
+        materialType: 'marble_gold',
+        role: 'La donna più bella del mondo, causa involontaria del conflitto. Vive con rimorso la sua condizione a Troia, consapevole delle stragi provocate per lei.'
+      },
+      {
+        id: 'dei',
+        name: 'Gli Dei dell\'Olimpo',
+        origin: 'Monte Olimpo',
+        faction: 'dei',
+        factionLabel: 'Divisi (Olimpo)',
+        bustType: 'zeus_god',
+        materialType: 'divine_gold',
+        role: 'Intervengono attivamente negli scontri: Era, Atena e Poseidone sostengono i Greci; Apollo, Afrodite e Ares aiutano i Troiani; Zeus mantiene l\'equilibrio del Fato.'
+      }
+    ];
+
+    // Funzione per creare la scultura 3D procedurale di un busto classico personalizzato
+    function createClassicalBust(char) {
+      const group = new THREE.Group();
+
+      // Palette materiali scultorei
+      const materials = {
+        marble: new THREE.MeshStandardMaterial({ color: 0xe7e5e4, roughness: 0.45, metalness: 0.08 }),
+        marble_gold: new THREE.MeshStandardMaterial({ color: 0xe7e5e4, roughness: 0.4, metalness: 0.1 }),
+        bronze: new THREE.MeshStandardMaterial({ color: 0xb47b44, roughness: 0.35, metalness: 0.75 }),
+        bronze_gold: new THREE.MeshStandardMaterial({ color: 0xd49b4b, roughness: 0.3, metalness: 0.82 }),
+        dark_bronze: new THREE.MeshStandardMaterial({ color: 0x78553a, roughness: 0.4, metalness: 0.75 }),
+        crimson_bronze: new THREE.MeshStandardMaterial({ color: 0xb86b43, roughness: 0.35, metalness: 0.78 }),
+        gold: new THREE.MeshStandardMaterial({ color: 0xeab308, roughness: 0.28, metalness: 0.85 }),
+        divine_gold: new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.22, metalness: 0.9 }),
+        marble_bronze: new THREE.MeshStandardMaterial({ color: 0xd6d3d1, roughness: 0.4, metalness: 0.25 })
+      };
+
+      const accentGold = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.25, metalness: 0.9 });
+      const crimsonCrest = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.7, metalness: 0.1 });
+      const blueCrest = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.7, metalness: 0.1 });
+      const pedestalMat = new THREE.MeshStandardMaterial({ color: 0x292524, roughness: 0.6, metalness: 0.3 });
+
+      const mainMat = materials[char.materialType] || materials.marble;
+
+      // 1. Piedistallo classico (base tornita)
+      const baseBottom = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.7, 0.18, 32), pedestalMat);
+      baseBottom.position.y = -1.35;
+      group.add(baseBottom);
+
+      const baseNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.55, 0.22, 32), pedestalMat);
+      baseNeck.position.y = -1.16;
+      group.add(baseNeck);
+
+      const goldRing = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.03, 16, 32), accentGold);
+      goldRing.rotation.x = Math.PI / 2;
+      goldRing.position.y = -1.05;
+      group.add(goldRing);
+
+      // 2. Torso / Spalle scolpite (taglio a busto museo)
+      const isFemale = (char.bustType === 'veiled_woman' || char.bustType === 'queen_diadem');
+      const chestWidth = isFemale ? 0.72 : (char.bustType === 'heavy_warrior' ? 0.98 : 0.88);
+      
+      const chestGeo = new THREE.SphereGeometry(1, 32, 24);
+      chestGeo.scale(chestWidth, 0.58, 0.48);
+      const chest = new THREE.Mesh(chestGeo, mainMat);
+      chest.position.y = -0.62;
+      group.add(chest);
+
+      // Drappeggio / Corazza sul petto
+      const drapeGeo = new THREE.TorusGeometry(chestWidth * 0.72, 0.12, 16, 32, Math.PI);
+      const drape = new THREE.Mesh(drapeGeo, isFemale ? mainMat : accentGold);
+      drape.rotation.z = Math.PI;
+      drape.rotation.x = -0.35;
+      drape.position.set(0, -0.45, 0.25);
+      group.add(drape);
+
+      // 3. Collo
+      const neckRadius = isFemale ? 0.21 : 0.27;
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(neckRadius * 0.92, neckRadius * 1.1, 0.45, 24), mainMat);
+      neck.position.y = -0.15;
+      group.add(neck);
+
+      // 4. Testa e tratti somatici classici
+      const headGroup = new THREE.Group();
+      headGroup.position.y = 0.35;
+      group.add(headGroup);
+
+      const craniumGeo = new THREE.SphereGeometry(0.42, 32, 32);
+      craniumGeo.scale(0.88, 1.08, 0.96);
+      const cranium = new THREE.Mesh(craniumGeo, mainMat);
+      headGroup.add(cranium);
+
+      // Mascella / Mento
+      const jawGeo = new THREE.CylinderGeometry(0.31, 0.21, 0.32, 24);
+      jawGeo.scale(0.92, 1, 0.95);
+      const jaw = new THREE.Mesh(jawGeo, mainMat);
+      jaw.position.set(0, -0.22, 0.04);
+      headGroup.add(jaw);
+
+      // Naso greco diritto
+      const noseGeo = new THREE.ConeGeometry(0.06, 0.22, 4);
+      const nose = new THREE.Mesh(noseGeo, mainMat);
+      nose.rotation.x = -0.22;
+      nose.position.set(0, -0.02, 0.41);
+      headGroup.add(nose);
+
+      // Arcata sopraccigliare
+      const browGeo = new THREE.BoxGeometry(0.52, 0.06, 0.14);
+      const brow = new THREE.Mesh(browGeo, mainMat);
+      brow.position.set(0, 0.08, 0.35);
+      headGroup.add(brow);
+
+      // 5. Dettagli specifici per ogni personaggio (Elmi, Barbe, Corone, Veli)
+      const addBeard = (length = 0.28, curly = true) => {
+        const beardGeo = new THREE.SphereGeometry(0.34, 24, 24);
+        beardGeo.scale(0.92, length / 0.25, 0.85);
+        const beard = new THREE.Mesh(beardGeo, mainMat);
+        beard.position.set(0, -0.26, 0.14);
+        headGroup.add(beard);
+        if (curly) {
+          for (let i = -3; i <= 3; i++) {
+            const curl = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 12), mainMat);
+            curl.position.set(i * 0.075, -0.36 - (3 - Math.abs(i)) * 0.03, 0.26);
+            headGroup.add(curl);
+          }
+        }
+      };
+
+      const addCorinthianHelmet = (crestMat, raised = true) => {
+        const helmGroup = new THREE.Group();
+        if (raised) {
+          helmGroup.rotation.x = -0.48;
+          helmGroup.position.set(0, 0.16, -0.06);
+        }
+        // Calotta elmo
+        const dome = new THREE.Mesh(new THREE.SphereGeometry(0.45, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.65), accentGold);
+        helmGroup.add(dome);
+
+        // Paraguance
+        const cheekL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.34, 0.28), accentGold);
+        cheekL.position.set(-0.36, -0.16, 0.18);
+        cheekL.rotation.y = 0.25;
+        helmGroup.add(cheekL);
+
+        const cheekR = cheekL.clone();
+        cheekR.position.x = 0.36;
+        cheekR.rotation.y = -0.25;
+        helmGroup.add(cheekR);
+
+        // Cimiero (cresta)
+        const crestSupport = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.55), accentGold);
+        crestSupport.position.set(0, 0.48, -0.05);
+        helmGroup.add(crestSupport);
+
+        const crestGeo = new THREE.TorusGeometry(0.48, 0.09, 12, 32, Math.PI * 1.15);
+        const crest = new THREE.Mesh(crestGeo, crestMat);
+        crest.rotation.y = Math.PI / 2;
+        crest.rotation.z = -0.2;
+        crest.position.set(0, 0.36, -0.08);
+        helmGroup.add(crest);
+
+        headGroup.add(helmGroup);
+      };
+
+      switch (char.bustType) {
+        case 'achilles':
+          addCorinthianHelmet(crimsonCrest, true);
+          break;
+        case 'hector':
+          addBeard(0.24, true);
+          addCorinthianHelmet(blueCrest, true);
+          break;
+        case 'spartan_king':
+          addBeard(0.26, true);
+          addCorinthianHelmet(crimsonCrest, true);
+          break;
+        case 'heavy_warrior':
+          addBeard(0.28, false);
+          // Elmo pesante con cresta larga
+          addCorinthianHelmet(accentGold, true);
+          break;
+        case 'young_warrior':
+          // Riccioli giovanili senza barba
+          for (let a = 0; a < Math.PI * 2; a += 0.45) {
+            const lock = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), mainMat);
+            lock.position.set(Math.cos(a) * 0.38, 0.22, Math.sin(a) * 0.38);
+            headGroup.add(lock);
+          }
+          break;
+        case 'king_crown':
+          addBeard(0.32, true);
+          // Corona reale micenea
+          const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.41, 0.39, 0.16, 32, 1, true), accentGold);
+          crown.position.y = 0.34;
+          headGroup.add(crown);
+          break;
+        case 'odysseus':
+          addBeard(0.25, true);
+          // Pileo (tipico copricapo conico dei marinai/Ulisse)
+          const pileus = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.48, 32), mainMat);
+          pileus.position.set(0, 0.42, -0.03);
+          pileus.rotation.x = -0.15;
+          headGroup.add(pileus);
+          break;
+        case 'elder_king':
+          addBeard(0.42, true);
+          const priamCrown = new THREE.Mesh(new THREE.TorusGeometry(0.39, 0.045, 16, 32), accentGold);
+          priamCrown.rotation.x = Math.PI / 2;
+          priamCrown.position.y = 0.28;
+          headGroup.add(priamCrown);
+          break;
+        case 'phrygian_prince':
+          // Berretto frigio ricurvo in avanti
+          const phrygian = new THREE.Mesh(new THREE.ConeGeometry(0.41, 0.55, 24), accentGold);
+          phrygian.position.set(0, 0.42, 0.05);
+          phrygian.rotation.x = 0.35;
+          headGroup.add(phrygian);
+          break;
+        case 'veiled_woman':
+          // Velo drappeggiato sul capo e sulle spalle
+          const veil = new THREE.Mesh(new THREE.SphereGeometry(0.47, 32, 24, Math.PI * 0.15, Math.PI * 1.7, 0, Math.PI * 0.75), mainMat);
+          veil.rotation.y = Math.PI;
+          veil.position.set(0, 0.04, -0.04);
+          headGroup.add(veil);
+          break;
+        case 'queen_diadem':
+          // Chignon classico e diadema regale
+          const bun = new THREE.Mesh(new THREE.SphereGeometry(0.22, 20, 20), mainMat);
+          bun.position.set(0, 0.15, -0.44);
+          headGroup.add(bun);
+          const diadem = new THREE.Mesh(new THREE.TorusGeometry(0.41, 0.04, 16, 32, Math.PI), accentGold);
+          diadem.position.set(0, 0.26, 0.12);
+          diadem.rotation.x = -0.4;
+          headGroup.add(diadem);
+          break;
+        case 'zeus_god':
+          addBeard(0.44, true);
+          // Folta chioma divina e corona d'alloro/raggi
+          for (let a = 0; a < Math.PI * 2; a += 0.38) {
+            const mane = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 14), mainMat);
+            mane.position.set(Math.cos(a) * 0.42, 0.18, Math.sin(a) * 0.42);
+            headGroup.add(mane);
+          }
+          const halo = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.025, 16, 48), accentGold);
+          halo.position.set(0, 0.15, -0.15);
+          headGroup.add(halo);
+          break;
+      }
+
+      return group;
+    }
+
+    // Gestione istanze Three.js per ogni card e per il modal
+    const activeViewers = [];
+
+    function setup3DViewer(container, char, isModal = false) {
+      const scene = new THREE.Scene();
+
+      const width = container.clientWidth || 260;
+      const height = container.clientHeight || 220;
+
+      const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(0, 0.1, isModal ? 3.5 : 3.8);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.innerHTML = '';
+      container.appendChild(renderer.domElement);
+
+      // Illuminazione museale a tre punti
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffedd5, 1.3);
+      keyLight.position.set(3, 4, 4);
+      scene.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight(
+        char.faction === 'achei' ? 0x38bdf8 : (char.faction === 'troiani' ? 0xfb7185 : 0xc084fc),
+        0.9
+      );
+      rimLight.position.set(-3, 2, -3);
+      scene.add(rimLight);
+
+      const bust = createClassicalBust(char);
+      bust.position.y = 0.25;
+      scene.add(bust);
+
+      // Controlli interattivi Mouse e Touch (Rotazione manuale)
+      let isDragging = false;
+      let previousX = 0;
+      let previousY = 0;
+      let targetRotationY = 0.25;
+      let targetRotationX = 0.05;
+
+      const onPointerDown = (clientX, clientY) => {
+        isDragging = true;
+        previousX = clientX;
+        previousY = clientY;
+      };
+
+      const onPointerMove = (clientX, clientY) => {
+        if (!isDragging) return;
+        const deltaX = clientX - previousX;
+        const deltaY = clientY - previousY;
+        targetRotationY += deltaX * 0.012;
+        targetRotationX = Math.max(-0.45, Math.min(0.45, targetRotationX + deltaY * 0.008));
+        previousX = clientX;
+        previousY = clientY;
+      };
+
+      const onPointerUp = () => {
+        isDragging = false;
+      };
+
+      const domEl = renderer.domElement;
+      domEl.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', onPointerUp);
+
+      domEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+      domEl.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+          onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+      domEl.addEventListener('touchend', onPointerUp);
+
+      const viewerObj = {
+        container,
+        renderer,
+        scene,
+        camera,
+        bust,
+        isModal,
+        update: () => {
+          if (!isDragging) {
+            targetRotationY += isModal ? 0.006 : 0.004;
+          }
+          bust.rotation.y += (targetRotationY - bust.rotation.y) * 0.1;
+          bust.rotation.x += (targetRotationX - bust.rotation.x) * 0.1;
+          renderer.render(scene, camera);
+        },
+        resize: () => {
+          if (!container.clientWidth || !container.clientHeight) return;
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+      };
+
+      activeViewers.push(viewerObj);
+      return viewerObj;
+    }
+
+    // Rendering delle card dei personaggi
+    const gridContainer = document.getElementById('characters-grid');
+
+    function getFactionStyles(faction) {
+      if (faction === 'achei') {
+        return {
+          badge: 'bg-sky-950/90 text-sky-300 border-sky-700/60',
+          borderHover: 'hover:border-sky-600/60',
+          glow: 'from-sky-950/30'
+        };
+      }
+      if (faction === 'troiani') {
+        return {
+          badge: 'bg-rose-950/90 text-rose-300 border-rose-700/60',
+          borderHover: 'hover:border-rose-600/60',
+          glow: 'from-rose-950/30'
+        };
+      }
+      return {
+        badge: 'bg-purple-950/90 text-purple-300 border-purple-700/60',
+        borderHover: 'hover:border-purple-600/60',
+        glow: 'from-purple-950/30'
+      };
+    }
+
+    function renderCharacterCards() {
+      gridContainer.innerHTML = '';
+      charactersData.forEach((char) => {
+        const styles = getFactionStyles(char.faction);
+        const card = document.createElement('article');
+        card.className = `character-card bg-stone-900/95 border border-stone-800 ${styles.borderHover} rounded-2xl overflow-hidden flex flex-col transition-all duration-300 shadow-lg`;
+        card.dataset.faction = char.faction;
+
+        card.innerHTML = `
+          <!-- Area Busto 3D -->
+          <div class="relative h-56 bg-gradient-to-b ${styles.glow} via-stone-900 to-stone-950 border-b border-stone-800/80">
+            <div id="canvas-${char.id}" class="w-full h-full"></div>
+            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold border ${styles.badge} pointer-events-none">
+              ${char.factionLabel}
+            </span>
+            <button data-inspect="${char.id}" title="Ingrandisci busto 3D" class="inspect-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-stone-950/80 hover:bg-amber-600 text-stone-300 hover:text-stone-950 border border-stone-700 flex items-center justify-center text-xs transition">
+              ⤢
+            </button>
+            <div class="absolute bottom-2 right-3 text-[10px] text-stone-500 pointer-events-none">
+              3D Interattivo
+            </div>
+          </div>
+
+          <!-- Dati Testuali -->
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="font-epic text-xl font-bold text-white mb-0.5">${char.name}</h3>
+            <p class="text-amber-400/90 text-xs font-medium mb-3">📍 ${char.origin}</p>
+            <p class="text-stone-300 text-xs sm:text-sm leading-relaxed flex-1">
+              ${char.role}
+            </p>
+          </div>
+        `;
+
+        gridContainer.appendChild(card);
+
+        // Inizializza scena 3D per questa card
+        const canvasEl = document.getElementById(`canvas-${char.id}`);
+        setup3DViewer(canvasEl, char, false);
+      });
+
+      // Listener per ingrandimento modal
+      document.querySelectorAll('.inspect-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const charId = btn.dataset.inspect;
+          const char = charactersData.find(c => c.id === charId);
+          if (char) openCharacterModal(char);
+        });
+      });
+    }
+
+    // Logica Filtri per Fazione
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Aggiorna stato bottoni
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('bg-amber-600', 'text-stone-950');
+          b.classList.add('bg-stone-900');
+        });
+        btn.classList.remove('bg-stone-900');
+        btn.classList.add('bg-amber-600', 'text-stone-950');
+
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.character-card').forEach(card => {
+          if (filter === 'all' || card.dataset.faction === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+
+        // Aggiorna dimensioni canvas visibili
+        setTimeout(() => {
+          activeViewers.forEach(v => v.resize());
+        }, 50);
+      });
+    });
+
+    // Gestione Modal Ingrandimento
+    const modal = document.getElementById('character-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const modalCanvasContainer = document.getElementById('modal-canvas-container');
+    let modalViewer = null;
+
+    function openCharacterModal(char) {
+      const styles = getFactionStyles(char.faction);
+      const badge = document.getElementById('modal-faction-badge');
+      badge.className = `inline-block self-start px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3 border ${styles.badge}`;
+      badge.textContent = char.factionLabel;
+
+      document.getElementById('modal-name').textContent = char.name;
+      document.getElementById('modal-origin').textContent = `Provenienza: ${char.origin}`;
+      document.getElementById('modal-role').textContent = char.role;
+
+      modal.classList.remove('hidden');
+
+      // Rimuovi eventuale vecchio viewer modal
+      if (modalViewer) {
+        const idx = activeViewers.indexOf(modalViewer);
+        if (idx > -1) activeViewers.splice(idx, 1);
+      }
+      modalViewer = setup3DViewer(modalCanvasContainer, char, true);
+      setTimeout(() => modalViewer.resize(), 30);
+    }
+
+    function closeCharacterModal() {
+      modal.classList.add('hidden');
+      if (modalViewer) {
+        const idx = activeViewers.indexOf(modalViewer);
+        if (idx > -1) activeViewers.splice(idx, 1);
+        modalViewer = null;
+      }
+    }
+
+    closeModalBtn.addEventListener('click', closeCharacterModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeCharacterModal();
+    });
+
+    // Loop di animazione globale
+    function animateAll() {
+      requestAnimationFrame(animateAll);
+      for (let i = 0; i < activeViewers.length; i++) {
+        activeViewers[i].update();
+      }
+    }
+
+    // Resize responsive
+    window.addEventListener('resize', () => {
+      activeViewers.forEach(v => v.resize());
+    });
+
+    // Avvio al caricamento
+    window.onload = function () {
+      renderCharacterCards();
+      animateAll();
+    };
+  </script>
+</body>
+</html>
